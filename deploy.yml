@@ -1,0 +1,49 @@
+---
+version: "2.0"
+
+services:
+  proxy:
+    image: ghcr.io/ovrclk/nginx-node-proxy:v0.0.1
+    env:
+      - RPC_SERVER=node:26657
+      - RPC_ALLOW=192.168.1.69
+      - RPC_PORT=26657
+      - SIGNER_SERVER=node:26658
+      - SIGNER_ALLOW=192.168.1.69,2.2.2.2
+      - SIGNER_PORT=26658
+    expose:
+      - port: 26657
+        as: 80
+        to:
+          - global: true
+      - port: 26658
+        to:
+          - global: true
+
+profiles:
+  compute:
+    proxy:
+      resources:
+        cpu:
+          units: 1
+        memory:
+          size: 512Mi
+        storage:
+          size: 100Mi
+  placement:
+    dcloud:
+      attributes:
+        host: akash
+      signedBy:
+        anyOf:
+          - akash1365yvmc4s7awdyj3n2sav7xfx76adc6dnmlx63
+      pricing:
+        proxy:
+          denom: uakt
+          amount: 1000
+
+deployment:
+  proxy:
+    dcloud:
+      profile: proxy
+      count: 1

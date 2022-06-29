@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - '81:26657'
+      - '82:26658'
+    environment:
+      - RPC_SERVER=node:26657
+      - RPC_ALLOW=192.168.1.69
+      - RPC_PORT=26657
+      - SIGNER_SERVER=node:26658
+      - SIGNER_ALLOW=192.168.1.69,2.2.2.2
+      - SIGNER_PORT=26658
