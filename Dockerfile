@@ -1,11 +1,4 @@
-FROM nginx
+FROM traefik:v2.8
 
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY default.conf /etc/nginx/templates/default.conf.template
-
-COPY configure.sh /configure.sh
-RUN chmod +x /configure.sh
-
-ENTRYPOINT ["/configure.sh"]
-
-CMD ["nginx", "-g", "daemon off;"]
+COPY traefik.toml /etc/traefik/traefik.toml
+COPY dynamic.toml /etc/traefik/dynamic.toml

@@ -3,14 +3,12 @@ version: "2.0"
 
 services:
   proxy:
-    image: ghcr.io/ovrclk/nginx-node-proxy:v0.0.1
+    image: ghcr.io/ovrclk/nginx-node-proxy:v0.0.3
     env:
-      - RPC_SERVER=node:26657
-      - RPC_ALLOW=192.168.1.69
-      - RPC_PORT=26657
-      - SIGNER_SERVER=node:26658
-      - SIGNER_ALLOW=192.168.1.69,2.2.2.2
-      - SIGNER_PORT=26658
+      - RPC_SERVER=rpc:26657
+      - RPC_ALLOW="86.17.168.124","2.2.2.2"
+      - SIGNER_SERVER=signer:26658
+      - SIGNER_ALLOW="86.17.168.124","2.2.2.2"
     expose:
       - port: 26657
         as: 80
@@ -19,10 +17,44 @@ services:
       - port: 26658
         to:
           - global: true
+  rpc:
+    image: "containous/whoami"
+    env: 
+      - WHOAMI_NAME=rpc
+    expose:
+      - port: 80
+        as: 26657
+        to:
+          - service: proxy
+  signer:
+    image: "containous/whoami"
+    env: 
+      - WHOAMI_NAME=signer
+    expose:
+      - port: 80
+        as: 26658
+        to:
+          - service: proxy
 
 profiles:
   compute:
     proxy:
+      resources:
+        cpu:
+          units: 1
+        memory:
+          size: 512Mi
+        storage:
+          size: 100Mi
+    rpc:
+      resources:
+        cpu:
+          units: 1
+        memory:
+          size: 512Mi
+        storage:
+          size: 100Mi
+    signer:
       resources:
         cpu:
           units: 1
@@ -41,9 +73,23 @@ profiles:
         proxy:
           denom: uakt
           amount: 1000
+        rpc:
+          denom: uakt
+          amount: 1000
+        signer:
+          denom: uakt
+          amount: 1000
 
 deployment:
   proxy:
     dcloud:
       profile: proxy
+      count: 1
+  rpc:
+    dcloud:
+      profile: rpc
+      count: 1
+  signer:
+    dcloud:
+      profile: signer
       count: 1
