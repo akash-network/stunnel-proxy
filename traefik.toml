@@ -1,9 +1,0 @@
-[providers]
-  [providers.file]
-    filename = "/etc/traefik/dynamic.toml"
-
-[entryPoints]
-  [entryPoints.rpc]
-    address = ":26657"
-  [entryPoints.signer]
-    address = ":26658"

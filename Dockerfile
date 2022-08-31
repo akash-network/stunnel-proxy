@@ -1,4 +1,10 @@
-FROM traefik:v2.8
+FROM debian:buster
 
-COPY traefik.toml /etc/traefik/traefik.toml
-COPY dynamic.toml /etc/traefik/dynamic.toml
+RUN apt-get update && apt-get -y --no-install-recommends install stunnel4
+
+COPY configure.sh /usr/local/configure.sh
+RUN chmod +x /usr/local/configure.sh
+
+ENTRYPOINT [ "/usr/local/configure.sh" ]
+
+CMD [ "stunnel" ]

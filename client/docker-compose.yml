@@ -1,0 +1,19 @@
+version: "3.3"
+services:
+  stunnel:
+    build: ../
+    environment:
+      - PSK=DmtaC6N3HOWFkJZpNZs2dkabFT5yQONw
+      - CLIENT=yes
+      - RPC_ACCEPT=0.0.0.0:36657
+      - RPC_HOST=stunnel:26657
+      - SIGNER_ACCEPT=0.0.0.0:36658
+      - SIGNER_HOST=stunnel:26658
+    networks:
+      - server_default
+    ports:
+      - '36657:36657'
+      - '36658:36658'
+networks:
+  server_default:
+    external: true

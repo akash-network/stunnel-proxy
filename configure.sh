@@ -2,28 +2,41 @@
 
 set -eu
 
-if [[ -n "$RPC_ALLOW" ]]; then
-  IFS=',' read -ra ips <<< "$RPC_ALLOW"
-  rules=()
-  for ip in "${ips[@]}"; do
-    rules+=("allow $ip;")
-  done
-  rules+=("deny all;")
-  export RPC_RULES=$( IFS=$'\n'; echo "${rules[*]}" )
-fi
+cat > /etc/stunnel/node.psk << EOF
+node:$PSK
+EOF
 
-export RPC_PORT="${RPC_PORT:-26657}"
+chown stunnel4 /etc/stunnel/node.psk
+chmod 0600 /etc/stunnel/node.psk
 
-if [[ -n "$SIGNER_ALLOW" ]]; then
-  IFS=',' read -ra ips <<< "$SIGNER_ALLOW"
-  rules=()
-  for ip in "${ips[@]}"; do
-    rules+=("allow $ip;")
-  done
-  rules+=("deny all;")
-  export SIGNER_RULES=$( IFS=$'\n'; echo "${rules[*]}" )
-fi
+cat > /etc/stunnel/stunnel.conf << EOF
+# stunnel client config for TMKMS server
 
-export SIGNER_PORT="${SIGNER_PORT:-26658}"
+setuid = stunnel4
+setgid = nogroup
 
-/docker-entrypoint.sh "$@"
+pid = /var/run/stunnel4/stunnel4.pid
+
+foreground = yes
+
+# for debugging
+debug = 7
+
+[rpc]
+client  = $CLIENT
+accept  = $RPC_ACCEPT
+connect = $RPC_HOST
+ciphers = PSK
+PSKidentity = node
+PSKsecrets = /etc/stunnel/node.psk
+
+[signer]
+client  = $CLIENT
+accept  = $SIGNER_ACCEPT
+connect = $SIGNER_HOST
+ciphers = PSK
+PSKidentity = node
+PSKsecrets = /etc/stunnel/node.psk
+EOF
+
+exec "$@"
