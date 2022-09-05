@@ -4,11 +4,12 @@ services:
     build: ../
     environment:
       - PSK=DmtaC6N3HOWFkJZpNZs2dkabFT5yQONw
-      - CLIENT=no
-      - RPC_ACCEPT=26657
-      - RPC_HOST=rpc:26657
-      - SIGNER_ACCEPT=26658
-      - SIGNER_HOST=signer:26658
+      - STUNNEL_SERVICE_RPC_CLIENT=no
+      - STUNNEL_SERVICE_RPC_ACCEPT=26657
+      - STUNNEL_SERVICE_RPC_CONNECT=rpc:26657
+      - STUNNEL_SERVICE_SIGNER_CLIENT=no
+      - STUNNEL_SERVICE_SIGNER_ACCEPT=26658
+      - STUNNEL_SERVICE_SIGNER_CONNECT=signer:26658
     ports:
       - "26657:26657"
       - "26658:26658"

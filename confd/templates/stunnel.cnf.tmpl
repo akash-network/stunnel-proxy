@@ -1,0 +1,13 @@
+foreground = yes
+syslog = no
+debug=7
+
+{{range $dir := lsdir "/stunnel/service"}}
+[{{base $dir}}]
+PSKidentity = node
+PSKsecrets = /etc/stunnel/node.psk
+ciphers = PSK
+{{$custdir := printf "/stunnel/service/%s/*" $dir}}{{range gets $custdir}}
+{{ base .Key }} = {{ .Value }}
+{{ end }}
+{{ end }}

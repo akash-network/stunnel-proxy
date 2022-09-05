@@ -1,0 +1,7 @@
+[template]
+mode = "0600"
+src = "stunnel.cnf.tmpl"
+dest = "/etc/stunnel/stunnel.conf"
+keys = [
+  "/stunnel/service/",
+]

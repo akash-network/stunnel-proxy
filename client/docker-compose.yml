@@ -4,11 +4,12 @@ services:
     build: ../
     environment:
       - PSK=DmtaC6N3HOWFkJZpNZs2dkabFT5yQONw
-      - CLIENT=yes
-      - RPC_ACCEPT=0.0.0.0:36657
-      - RPC_HOST=stunnel:26657
-      - SIGNER_ACCEPT=0.0.0.0:36658
-      - SIGNER_HOST=stunnel:26658
+      - STUNNEL_SERVICE_RPC_CLIENT=yes
+      - STUNNEL_SERVICE_RPC_ACCEPT=0.0.0.0:36657
+      - STUNNEL_SERVICE_RPC_CONNECT=stunnel:26657
+      - STUNNEL_SERVICE_SIGNER_CLIENT=yes
+      - STUNNEL_SERVICE_SIGNER_ACCEPT=0.0.0.0:36658
+      - STUNNEL_SERVICE_SIGNER_CONNECT=stunnel:26658
     networks:
       - server_default
     ports:
