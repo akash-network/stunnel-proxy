@@ -8,9 +8,9 @@ This is particularly useful for Akash - you can deploy this container alongside 
 
 To securely proxy the connection from one location to another, you run two instances of this container. One is deployed alonside the secure service you want to connect TO. The other is deployed in `client` mode on the server you want to connect FROM.
 
-You can proxy as many services as required - the `STUNNEL_SERVICE_*` environment variables are dynamic. For example a set of `STUNNEL_SERVICE_WEB_*` variables will create one 'target' named `web`, and `STUNNEL_SERVICE_FOOBAR_*` will create another target named `foobar`.
+You can proxy as many services as required - the `STUNNEL_SVC_*` environment variables are dynamic. For example a set of `STUNNEL_SVC_WEB_*` variables will create one 'target' named `web`, and `STUNNEL_SVC_FOOBAR_*` will create another target named `foobar`.
 
-See Stunnel docs for all available configuration options, but the main variables you need are `*_CLIENT`, `*_ACCEPT` and `*_CONNECT`.
+See the [Stunnel docs](https://www.stunnel.org/docs.html) for all available configuration options, but the main variables you need are `*_CLIENT`, `*_ACCEPT` and `*_CONNECT`.
 
 We will use a simple web based container as an example. Note the example uses docker-compose but this can be applied to any method of running containers.
 
@@ -22,8 +22,6 @@ Note the `web` service does not expose any public ports. The only way to access 
 
 The `PSK` environment variable is a 'pre shared key', and should be identical on your client deployment.
 
-The `CLIENT=no` variable tells Stunnel that this service is receiving connections, not sending them.
-
 ```
 services:
   web:
@@ -32,9 +30,8 @@ services:
     image: ghcr.io/ovrclk/stunnel-proxy:v0.0.1
     environment:
       - PSK=DmtaC6N3HOWFkJZpNZs2dkabFT5yQONw
-      - STUNNEL_SERVICE_WEB_CLIENT=no
-      - STUNNEL_SERVICE_WEB_ACCEPT=8080
-      - STUNNEL_SERVICE_WEB_CONNECT=web:80
+      - STUNNEL_SVC_WEB_ACCEPT=8080
+      - STUNNEL_SVC_WEB_CONNECT=web:80
     ports:
       - '8080:80'
 ```
@@ -45,7 +42,7 @@ The docker-compose.yml below will deploy a `stunnel` service which connects to y
 
 The `PSK` variable is the 'pre shared key' and should match the server deployment.
 
-The `CLIENT=yes` variable tells Stunnel this service is sending connections.
+The `CLIENT=yes` variable tells Stunnel this service is sending connections instead of the default behaviour of receiving connections.
 
 ```
 services:
@@ -53,9 +50,9 @@ services:
     image: ghcr.io/ovrclk/stunnel-proxy:v0.0.1
     environment:
       - PSK=DmtaC6N3HOWFkJZpNZs2dkabFT5yQONw
-      - STUNNEL_SERVICE_WEB_CLIENT=yes
-      - STUNNEL_SERVICE_WEB_ACCEPT=0.0.0.0:8080
-      - STUNNEL_SERVICE_WEB_CONNECT=1.2.3.4:8080
+      - STUNNEL_SVC_WEB_CLIENT=yes
+      - STUNNEL_SVC_WEB_ACCEPT=0.0.0.0:8080
+      - STUNNEL_SVC_WEB_CONNECT=1.2.3.4:8080
     ports:
       - '8080:8080'
 ```
